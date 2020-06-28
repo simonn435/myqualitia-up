@@ -45,6 +45,9 @@
   gtag('config', 'UA-170115373-1');
 </script>
 
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+
 </head>
 <body>
   <!-- ========== HEADER ========== -->
@@ -116,9 +119,7 @@
 
                 <!-- Button -->
                 <li class="navbar-nav-last-item">
-                  <a class="btn btn-sm btn-primary transition-3d-hover" href="buytianeptine.html">
-                    Buy Tianeptine
-                  </a>
+                  <a class="btn btn-sm btn-primary transition-3d-hover" href="buytianeptine.html">Buy Tianeptine</a>
                 </li>
                 <!-- End Button -->
               </ul>
@@ -160,7 +161,7 @@ Please make sure you do not put any comments on the comment section of the payme
 <div class="container text-dark bg-light px-3 pb-4 mb-4">
         <div class="row">
         <div class="col-md-12 payment-opt">
-          <form class="form-horizontal" method="post" action="order.php">
+          <form class="form-horizontal" method="post" action="order1.php">
             <div class="row">
     <div class="col">
             <div class="form-group">
@@ -255,6 +256,23 @@ Please make sure you do not put any comments on the comment section of the payme
             </div>
             <div class="form-group">
               <div class="col-sm-10">
+              <select class="form-control border border-secondary" name="qreserve" id="qreserve">
+                <option value="">Q Reserve</option>
+                <option>Q Reserve Sample 1.25g $12</option>
+                <option>Q Reserve 2.5g $30</option>
+                <option>Q Reserve 5g $45</option>
+                <option>Q Reserve 10g $87</option>
+                <option>Q Reserve 20g $165</option>
+                <option>Q Reserve 25g $205</option>  
+                <option>Q Reserve 30g $240</option>
+                <option>Q Reserve 40g $310</option>
+                <option>Q Reserve 50g $356</option>
+                <option>I'm not sure</option>
+              </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-10">
               <select class="form-control border border-secondary" name="blend" id="blend">
                 <option value="">Blends</option>
                 <option>50/50 Sodium Sulphate</option>
@@ -281,6 +299,9 @@ Please make sure you do not put any comments on the comment section of the payme
                 <textarea class="form-control border border-secondary" name="message" id="exampleFormControlTextarea1" rows="3"></textarea>
               </div>
               </div>
+              <div class="captcha_wrapper mb-2">
+              <div class="g-recaptcha" data-sitekey="6Ldm46gZAAAAAChJjXNVgrMO5-4jsj_b0pTbgwLO"></div>
+            </div>
             </div>
           </div>
           <div class="row">
@@ -424,7 +445,7 @@ Please make sure you do not put any comments on the comment section of the payme
           <div class="col-lg-3 ml-lg-auto mb-5 mb-lg-0">
             <!-- Logo -->
             <div class="mb-4">
-              <a href="../landings/index.html" aria-label="Front">
+              <a href="index.html" aria-label="Front">
                 <img class="brand" src="assets/svg/logos/logo-white.png" alt="Logo">
               </a>
             </div>
