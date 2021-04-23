@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This example shows settings to use when sending via Google's Gmail servers.
+ * This uses traditional id & password authentication - look at the gmail_xoauth.phps
+ * example to see how to use XOAUTH2.
+ * The IMAP section shows how to save this message to the 'Sent Mail' folder using IMAP commands.
+ */
+
 //Import PHPMailer classes into the global namespace
 // use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -10,55 +17,156 @@ require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
 // require '../vendor/autoload.php';
 
-$mail = new PHPMailer(); // create a new object
-    $html = ' <div class = "row"><img src="assets/svg/logos/logo.png" alt="Website Change Request" /></div>';
+//Create a new PHPMailer instance
+$mail = new PHPMailer;
+
+//Tell PHPMailer to use SMTP
+$mail->isSMTP();
+//Enable SMTP debugging
+// 0 = off (for production use)
+// 1 = client messages
+// 2 = client and server messages
+$mail->SMTPDebug =0;
+
+//Set the hostname of the mail server
+$mail->Host = 'smtp.gmail.com';
+// use
+// $mail->Host = gethostbyname('smtp.gmail.com');
+// if your network does not support SMTP over IPv6
+
+//Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
+$mail->Port = 587;
+
+//Set the encryption system to use - ssl (deprecated) or tls
+$mail->SMTPSecure = 'tls';
+
+//Whether to use SMTP authentication
+$mail->SMTPAuth = true;
+
+//Username to use for SMTP authentication - use full email address for gmail
+$mail->Username = "myqualita@gmail.com";
+
+//Password to use for SMTP authentication
+$mail->Password = "Nova@92716";
+
+// keeps the current $mail settings and creates new object
+$mail1 = clone $mail;
+
+//Set who the message is to be sent from
+$mail->setFrom('myqualitia@gmail.com', 'MyQualitia');
+//For user mail set who the message is to be sent from
+$mail1->setFrom('myqualitia@gmail.com', 'MyQualitia');
+//Set an alternative reply-to address
+$mail->addReplyTo('myqualitia@gmail.com', 'MyQualitia');
+
+//Set who the message is to be sent to
+$mail->addAddress('myqualitia@gmail.com', 'MyQualitia');
+//For user mail set who the message is to be sent to
+$mail1->addAddress($_POST['email'], 'MyQualitia');
+//$mail->addAddress($_POST['emailaddress'] , 'MogulMatter');
+
+//Set the subject line
+$mail->Subject = 'MyQualitia Contact Us';
+//For user mail set the subject line
+$mail1->Subject = 'MyQualitia Contact Us';
+//Read an HTML message body from an external file, convert referenced images to embedded,
+//convert HTML into a basic plain-text alternative body
+// $mail->msgHTML(file_get_contents('contents.html'), __DIR__);
+$html .= "<h4>You have received a new message from ". strip_tags($_POST['name'])."</h4>" ;
+$html .= '<table rules="all" style="border-color: #666;" cellpadding="10">';
+$html .= "<tr><td><strong>Name:</strong> </td><td>" . strip_tags($_POST['name']) . "</td></tr>";
+$html .= "<tr><td><strong>Email:</strong> </td><td>" . strip_tags($_POST['email']) . "</td></tr>";
+$html .= "<tr><td><strong>Telephone:</strong> </td><td>" . strip_tags($_POST['phone']) . "</td></tr>";
+$html .= "<tr><td><strong>Message:</strong> </td><td>" . strip_tags($_POST['message']) . "</td></tr>";
+$response = $_POST["g-recaptcha-response"];
 
 
+    $url = 'https://www.google.com/recaptcha/api/siteverify';
+    $data = array(
+        'secret' => '6Ldm46gZAAAAADUHvmga1JIvYOrCU_YiZ2oCcqST',
+        'response' => $_POST["g-recaptcha-response"]
+    );
+    $options = array(
+        'http' => array (
+            'method' => 'POST',
+            'content' => http_build_query($data)
+        )
+    );
+    $context  = stream_context_create($options);
+    $verify = file_get_contents($url, false, $context);
+    $captcha_success=json_decode($verify);
 
-            $html .= "<h4>You have received a new message from ". strip_tags($_POST['name1'])."</h4>" ;
-            $html .= '<table rules="all" style="border-color: #666;" cellpadding="10">';
-            $html .= "<tr><td><strong>Name:</strong> </td><td>" . strip_tags($_POST['name1']) . "</td></tr>";
-            $html .= "<tr><td><strong>Email:</strong> </td><td>" . strip_tags($_POST['email1']) . "</td></tr>";
-            $html .= "<tr><td><strong>Telephone:</strong> </td><td>" . strip_tags($_POST['phone1']) . "</td></tr>";
-            $html .= "<tr><td><strong>Message:</strong> </td><td>" . strip_tags($_POST['message1']) . "</td></tr>";
-    
-            $html .= "</table>";
+    if ($captcha_success->success==false) {
+        header('Location: https://www.myqualitia.com/404.html');
+        die;
+    }
+
+$html1 = "<p>Hello ".$_POST['name']."</p>
+
+<p>Thank you for contacting us.</p>
+<p>You will hear from us shortly</p>
+<p>Thank you</p>
+<p>MyQualitia</p>";
+
+$mail->msgHTML($html);
+
+$mail1->msgHTML($html1);
+
+//Replace the plain text body with one created manually
+$mail->AltBody = 'This is a plain-text message body';
+
+$mail1->AltBody = 'This is a plain-text message body';
+
+//Attach an image file
+// $mail->addAttachment('images/phpmailer_mini.png');
+
+//send the message, check for errors
+if (!$mail->send()) {
+    echo "Mailer Error: " . $mail->ErrorInfo;
+} elseif(!$mail1->send()){
+echo "Mailer Error: " . $mail->ErrorInfo;
+}
+else
+{    echo "";
+
+    //Section 2: IMAP
+    //Uncomment these to save your message in the 'Sent Mail' folder.
+    #if (save_mail($mail)) {
+    #    echo "Message saved!";
+    #}
+}
 
 
-    $mail->msgHTML($html);
+//Section 2: IMAP
+//IMAP commands requires the PHP IMAP Extension, found at: https://php.net/manual/en/imap.setup.php
+//Function to call which uses the PHP imap_*() functions to save messages: https://php.net/manual/en/book.imap.php
+//You can use imap_getmailboxes($imapStream, '/imap/ssl', '*' ) to get a list of available folders or labels, this can
+//be useful if you are trying to get this working on a non-Gmail IMAP server.
+/*
+function save_mail($mail)
+{
+    //You can change 'Sent Mail' to any other folder or tag
+    $path = "{imap.gmail.com:993/imap/ssl}[Gmail]/Sent Mail";
 
+    //Tell your server to open an IMAP connection using the same username and password as you used for SMTP
+    $imapStream = imap_open($path, $mail->Username, $mail->Password);
 
-$mail->IsSMTP(); // enable SMTP
-$mail->SMTPDebug = 0; // debugging: 1 = errors and messages, 2 = messages only
-$mail->SMTPAuth = true; // authentication enabled
-$mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for Gmail
-$mail->Host = "smtp.gmail.com";
-$mail->Port = 465; // or 587
-$mail->IsHTML(true);
-$mail->Username = "myqualitia@gmail.com";
-$mail->Password = "nick3484";
-$mail->SetFrom("myqualitia@gmail.com");
-$mail->Subject = 'New Email From MyQualitia';
-$mail->Body = $html;
-$mail->AddAddress("myqualitia@gmail.com");
+    $result = imap_append($imapStream, $path, $mail->getSentMIMEMessage());
+    imap_close($imapStream);
 
- if(!$mail->Send()) {
-    echo "error";
- } else {
-    echo " ";
- }
+    return $result;
+}*/
 
 header( "refresh:5;url= https://myqualitia.com/" );
 
 
-
 ?>
 
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <!-- Title -->
-  <title>MyQualitia</title>
+  <title>MyQualitia | Home</title>
 
   <!-- Required Meta Tags Always Come First -->
   <meta charset="utf-8">
@@ -80,43 +188,28 @@ header( "refresh:5;url= https://myqualitia.com/" );
 
   <!-- CSS Front Template -->
   <link rel="stylesheet" href="assets/css/theme.css">
-
-        
-        
-
-    <title>Thank you</title>
-    <style>
-      body{
-        background-color: #e39a1b;
-          }
-        .lead{
-            text-align: center;
-        }
-        .btn-padding{
-            padding: 10px;
-        }
-    </style>
+  <link rel="stylesheet" href="assets/css/custom.css">
 </head>
 <body>
-
+    <div class="container">
     <div class="row full-height" >
             <div>
                 <div class="fetured-text ">
                 <h1 class="white">Thank You!</h1>
                     <p class="lead "><strong>According to the content of your message, you will receive a reply back shortly.</strong> You will be directed back to the site after 5 seconds</p>
                     <hr>
-              
+
                     <div class="btn-padding">
-                      <a class="btn lead btn-padding" href="https://MyQualitia.com" role="button">Continue to homepage</a>
+                      <a class="btn lead btn-padding" href="https://myqualitia.com" role="button">Continue to homepage</a>
                     </div>
                 </div>
               </div>
-
+        </div>
     </div>
 
 
 
 
- 
+
 </body>
 </html>

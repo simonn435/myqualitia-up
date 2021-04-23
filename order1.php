@@ -47,7 +47,7 @@ $mail->SMTPAuth = true;
 $mail->Username = "myqualitia@gmail.com";
 
 //Password to use for SMTP authentication
-$mail->Password = "Laura3582";
+$mail->Password = "Nova@92716";
 
 // keeps the current $mail settings and creates new object
 $mail1 = clone $mail;
@@ -110,15 +110,14 @@ $html .= "<tr><td><strong>User Agreed:</strong> </td><td>" .implode("," , $_POST
     if ($captcha_success->success==false) {
         header('Location: https://www.myqualitia.com/404.html');
         die;
-    } 
+    }
 
 $html1 = "<p>Hello ".$_POST['name']."</p>
 
 <p>Thank you for your order.</p>
-
-<p>We'll be reaching out to you shortly about payment information and confirm your order</p>
-
-<p>Thank you, <br> MyQualitia</p>";
+<p>You're order will be confirmed shortly</p>
+<p>Thank you</p>
+<p>MyQualitia</p>";
 
 $mail->msgHTML($html);
 
@@ -135,7 +134,7 @@ $mail1->AltBody = 'This is a plain-text message body';
 //send the message, check for errors
 if (!$mail->send()) {
     echo "Mailer Error: " . $mail->ErrorInfo;
-} elseif(!$mail1->send()){ 
+} elseif(!$mail1->send()){
 echo "Mailer Error: " . $mail->ErrorInfo;
 }
 else
@@ -209,7 +208,7 @@ header( "refresh:5;url= https://myqualitia.com/" );
                 <h1 class="white">Thank You!</h1>
                     <p class="lead "><strong>According to the content of your message, you will receive a reply back shortly.</strong> You will be directed back to the site after 5 seconds</p>
                     <hr>
-              
+
                     <div class="btn-padding">
                       <a class="btn lead btn-padding" href="https://myqualitia.com" role="button">Continue to homepage</a>
                     </div>
@@ -221,6 +220,6 @@ header( "refresh:5;url= https://myqualitia.com/" );
 
 
 
- 
+
 </body>
 </html>

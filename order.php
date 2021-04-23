@@ -46,7 +46,7 @@ $mail->Host = "smtp.gmail.com";
 $mail->Port = 465; // or 587
 $mail->IsHTML(true);
 $mail->Username = "myqualitia@gmail.com";
-$mail->Password = "Laura3582";
+$mail->Password = "nick3484";
 $mail->SetFrom("myqualitia@gmail.com");
 $mail->Subject = 'New Email From MyQualitia';
 $mail->Body = $html;

@@ -9,10 +9,10 @@
     <loc>https://www.myqualitia.com/index.html</loc>
     <changefreq>always</changefreq>
   </url>
-  <url>
+  <!-- <url>
     <loc>https://www.myqualitia.com/404.html</loc>
     <changefreq>always</changefreq>
-  </url>
+  </url> -->
   <url>
     <loc>https://www.myqualitia.com/terms.html</loc>
     <changefreq>always</changefreq>
